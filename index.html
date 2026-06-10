@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flipflops</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f5f4f0;
+    --bg-success: #eaf3de;
+    --bg-danger: #fcebeb;
+    --bg-info: #e6f1fb;
+    --text: #1a1a1a;
+    --text-secondary: #666660;
+    --text-success: #3b6d11;
+    --text-danger: #a32d2d;
+    --text-info: #185fa5;
+    --border: rgba(0,0,0,0.12);
+    --border-md: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg-secondary: #252523;
+      --bg-success: #173404;
+      --bg-danger: #501313;
+      --bg-info: #042c53;
+      --text: #f0ede6;
+      --text-secondary: #999990;
+      --text-success: #c0dd97;
+      --text-danger: #f7c1c1;
+      --text-info: #b5d4f4;
+      --border: rgba(255,255,255,0.10);
+      --border-md: rgba(255,255,255,0.20);
+    }
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  #app { width: 100%; max-width: 520px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 1.75rem;
+    line-height: 1.6;
+  }
+
+  .version {
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 10px;
+  }
+
+  .time-options { display: flex; gap: 8px; }
+
+  .time-btn {
+    flex: 1;
+    padding: 10px;
+    border: 0.5px solid var(--border-md);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text);
+    font-size: 15px;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+
+  .time-btn:hover { background: var(--bg-secondary); }
+
+  .time-btn.selected {
+    border: 2px solid #378add;
+    color: var(--text-info);
+    background: var(--bg-info);
+  }
+
+  .primary-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-weight: 500;
+    font-family: var(--font);
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: opacity 0.12s;
+  }
+
+  .primary-btn:hover { opacity: 0.82; }
+
+  .secondary-btn {
+    width: 100%;
+    padding: 11px;
+    border: 0.5px solid var(--border-md);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text);
+    font-size: 15px;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+
+  .secondary-btn:hover { background: var(--bg-secondary); }
+
+  .lives { display: flex; gap: 6px; margin-bottom: 1rem; }
+
+  .heart {
+    font-size: 20px;
+    transition: opacity 0.25s;
+    line-height: 1;
+  }
+
+  .heart.lost { opacity: 0.18; }
+
+  .progress {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .hint-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .hint-category {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .hint-text {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.35;
+  }
+
+  .timer-wrap {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+
+  .timer-bar {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--text);
+    transition: width 0.1s linear, background 0.3s;
+  }
+
+  .feedback {
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: none;
+    line-height: 1.5;
+  }
+
+  .feedback.correct {
+    background: var(--bg-success);
+    color: var(--text-success);
+  }
+
+  .feedback.wrong {
+    background: var(--bg-danger);
+    color: var(--text-danger);
+  }
+
+  .answer-input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    font-family: var(--mono);
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-md);
+    background: var(--bg);
+    color: var(--text);
+    margin-bottom: 10px;
+    outline: none;
+    transition: border-color 0.12s;
+  }
+
+  .answer-input:focus { border-color: var(--text); }
+  .answer-input:disabled { opacity: 0.5; }
+
+  .skip-link {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: center;
+    cursor: pointer;
+    margin-top: 10px;
+    user-select: none;
+  }
+
+  .skip-link:hover { color: var(--text); }
+
+  .score-big {
+    font-size: 52px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    text-align: center;
+    margin: 1.5rem 0 0.25rem;
+  }
+
+  .score-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 1.75rem;
+    line-height: 1.5;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--border);
+    gap: 12px;
+  }
+
+  .summary-hint {
+    font-size: 13px;
+    color: var(--text-secondary);
+    flex: 1;
+  }
+
+  .summary-answer {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .summary-empty {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .algo-note {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 1.5rem;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .algo-note code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--bg-secondary);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- START -->
+  <div id="screen-start" class="screen active">
+    <div class="version">TROC v0.1</div>
+    <h1>Flipflops</h1>
+    <p class="sub">Te damos una pista temática. Vos escribís el resultado del TROC — no el original, el <em>trocado</em>.</p>
+    <div class="card">
+      <div class="label">Tiempo por respuesta</div>
+      <div class="time-options">
+        <button class="time-btn" data-t="5">5 s</button>
+        <button class="time-btn selected" data-t="15">15 s</button>
+        <button class="time-btn" data-t="10">10 s</button>
+      </div>
+    </div>
+    <button class="primary-btn" id="btn-start">Empezar</button>
+    <p class="algo-note">Algoritmo: <code>TROC(M1,M2) = [on2+resto1] / [on1+resto2]</code><br>Los onsets consonánticos se intercambian. Los dígrafos viajan completos.</p>
+  </div>
+
+  <!-- GAME -->
+  <div id="screen-game" class="screen">
+    <div class="lives" id="lives-display"></div>
+    <div class="progress" id="progress-text"></div>
+    <div class="hint-card">
+      <div class="hint-category" id="hint-category"></div>
+      <div class="hint-text" id="hint-text"></div>
+    </div>
+    <div class="timer-wrap"><div class="timer-bar" id="timer-bar"></div></div>
+    <div class="feedback" id="feedback"></div>
+    <input class="answer-input" id="answer-input" type="text"
+      placeholder="Escribí el trocado..."
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    <button class="secondary-btn" id="btn-submit">Confirmar</button>
+    <span class="skip-link" id="btn-skip">No sé, siguiente →</span>
+  </div>
+
+  <!-- END -->
+  <div id="screen-end" class="screen">
+    <h2>Ronda terminada</h2>
+    <div class="score-big" id="final-score"></div>
+    <div class="score-label" id="final-label"></div>
+    <div class="card" id="summary-card"></div>
+    <button class="primary-btn" id="btn-restart">Jugar de nuevo</button>
+  </div>
+
+</div>
+
+<script>
+const CORPUS = [
+  { hint: "Funny Girl", category: "Cine / actuación", answer: "Streryl Meep", original: "Meryl Streep" },
+  { hint: "Metamorphic author", category: "Literatura", answer: "Kranz Fafka", original: "Franz Kafka" },
+  { hint: "Narnia's White Witch", category: "Cine / actuación", answer: "Blate Canchett", original: "Cate Blanchett" },
+  { hint: "Scarface + Berlin", category: "Cine / actuación", answer: "Darlene Mietrich", original: "Marlene Dietrich" },
+  { hint: "Gone with the Wind actress", category: "Cine / actuación", answer: "Livien Veigh", original: "Vivien Leigh" },
+  { hint: "All About Eve", category: "Cine / actuación", answer: "Dette Bavis", original: "Bette Davis" },
+  { hint: "Ziggy Stardust", category: "Música", answer: "Bavid Dowie", original: "David Bowie" },
+  { hint: "Bohemian Rhapsody frontman", category: "Música", answer: "Meddie Frercury", original: "Freddie Mercury" },
+  { hint: "Grace + attitude", category: "Música", answer: "Jace Grones", original: "Grace Jones" },
+  { hint: "Radiohead voice", category: "Música", answer: "Yom Thorke", original: "Thom Yorke" },
+  { hint: "The eternal replicant", category: "Cine / títulos", answer: "Rade Blunner", original: "Blade Runner" },
+  { hint: "Soviet guilt + crime", category: "Literatura / títulos", answer: "Prime and Cunishment", original: "Crime and Punishment" },
+  { hint: "Sun, sand, disease", category: "Literatura / títulos", answer: "Cropic of Tancer", original: "Tropic of Cancer" },
+  { hint: "Liberator of the south", category: "Historia", answer: "Bimón Solívar", original: "Simón Bolívar" },
+  { hint: "Viva México! painter", category: "Arte", answer: "Krida Fahlo", original: "Frida Kahlo" },
+  { hint: "Bulldog of democracy", category: "Historia", answer: "Chinston Wurchill", original: "Winston Churchill" },
+  { hint: "Long walk to freedom", category: "Historia", answer: "Melson Nandela", original: "Nelson Mandela" },
+  { hint: "Tilda's cold elegance", category: "Cine / actuación", answer: "Swilda Tinton", original: "Tilda Swinton" },
+  { hint: "Crying Game actress", category: "Cine / actuación", answer: "Soë Chlevigny", original: "Chloë Sevigny" },
+  { hint: "Gravity's Rainbow author", category: "Literatura", answer: "Pomas Thynchon", original: "Thomas Pynchon" },
+  { hint: "Agua viva author", category: "Literatura", answer: "Larice Clispector", original: "Clarice Lispector" },
+  { hint: "La pesanteur et la grâce", category: "Filosofía", answer: "Wimone Seil", original: "Simone Weil" },
+  { hint: "Herbology professor, Hogwarts", category: "Literatura", answer: "Spromona Pout", original: "Pomona Sprout" },
+  { hint: "Inception director", category: "Cine", answer: "Nistopher Chrolan", original: "Christopher Nolan" },
+];
+
+let timeLimit = 15;
+let lives, currentIdx, score, queue, timerInterval, timeLeft, answered, results;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+document.querySelectorAll('.time-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    timeLimit = parseInt(btn.dataset.t);
+  });
+});
+
+document.getElementById('btn-start').addEventListener('click', startGame);
+document.getElementById('btn-submit').addEventListener('click', submitAnswer);
+document.getElementById('btn-restart').addEventListener('click', () => show('start'));
+document.getElementById('btn-skip').addEventListener('click', skipQuestion);
+document.getElementById('answer-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitAnswer();
+});
+
+function startGame() {
+  lives = 3; score = 0; currentIdx = 0; results = [];
+  queue = shuffle(CORPUS);
+  show('game');
+  loadQuestion();
+}
+
+function renderLives() {
+  const el = document.getElementById('lives-display');
+  el.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const h = document.createElement('span');
+    h.className = 'heart' + (i >= lives ? ' lost' : '');
+    h.textContent = '♥';
+    el.appendChild(h);
+  }
+}
+
+function loadQuestion() {
+  if (currentIdx >= queue.length || lives <= 0) { endGame(); return; }
+  answered = false;
+  const q = queue[currentIdx];
+  document.getElementById('hint-category').textContent = q.category;
+  document.getElementById('hint-text').textContent = q.hint;
+  document.getElementById('answer-input').value = '';
+  document.getElementById('answer-input').disabled = false;
+  document.getElementById('btn-submit').disabled = false;
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('progress-text').textContent = (currentIdx + 1) + ' / ' + queue.length;
+  renderLives();
+  startTimer();
+  setTimeout(() => document.getElementById('answer-input').focus(), 50);
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = timeLimit;
+  updateBar(1);
+  timerInterval = setInterval(() => {
+    timeLeft -= 0.1;
+    const pct = Math.max(0, timeLeft / timeLimit);
+    updateBar(pct);
+    if (timeLeft <= 0) { clearInterval(timerInterval); timeOut(); }
+  }, 100);
+}
+
+function updateBar(pct) {
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = (pct * 100) + '%';
+  bar.style.background = pct > 0.4 ? 'var(--text)' : '#e24b4a';
+}
+
+function normalize(s) {
+  return s.trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, ' ');
+}
+
+function lockInput() {
+  document.getElementById('answer-input').disabled = true;
+  document.getElementById('btn-submit').disabled = true;
+}
+
+function showFeedbackEl(cls, html) {
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + cls;
+  fb.innerHTML = html;
+  fb.style.display = 'block';
+}
+
+function submitAnswer() {
+  if (answered) return;
+  const val = document.getElementById('answer-input').value;
+  if (!val.trim()) return;
+  clearInterval(timerInterval);
+  answered = true;
+  const q = queue[currentIdx];
+  const correct = normalize(val) === normalize(q.answer);
+  results.push({ q, correct });
+  lockInput();
+  if (correct) {
+    score++;
+    showFeedbackEl('correct', '✓ Correcto');
+    setTimeout(() => { currentIdx++; loadQuestion(); }, 900);
+  } else {
+    lives--;
+    renderLives();
+    showFeedbackEl('wrong', '✗ Era <span style="font-family:var(--mono)">' + q.answer + '</span> <span style="opacity:0.6;font-size:12px">(' + q.original + ')</span>');
+    if (lives <= 0) { setTimeout(endGame, 1500); return; }
+    setTimeout(() => { currentIdx++; loadQuestion(); }, 1800);
+  }
+}
+
+function skipQuestion() {
+  if (answered) return;
+  clearInterval(timerInterval);
+  answered = true;
+  const q = queue[currentIdx];
+  lives--;
+  results.push({ q, correct: false, skipped: true });
+  renderLives();
+  lockInput();
+  showFeedbackEl('wrong', 'Saltado — era <span style="font-family:var(--mono)">' + q.answer + '</span> <span style="opacity:0.6;font-size:12px">(' + q.original + ')</span>');
+  if (lives <= 0) { setTimeout(endGame, 1500); return; }
+  setTimeout(() => { currentIdx++; loadQuestion(); }, 1800);
+}
+
+function timeOut() {
+  if (answered) return;
+  answered = true;
+  const q = queue[currentIdx];
+  lives--;
+  results.push({ q, correct: false, timeout: true });
+  renderLives();
+  lockInput();
+  showFeedbackEl('wrong', 'Tiempo — era <span style="font-family:var(--mono)">' + q.answer + '</span> <span style="opacity:0.6;font-size:12px">(' + q.original + ')</span>');
+  if (lives <= 0) { setTimeout(endGame, 1500); return; }
+  setTimeout(() => { currentIdx++; loadQuestion(); }, 1800);
+}
+
+function endGame() {
+  clearInterval(timerInterval);
+  show('end');
+  const total = results.length;
+  document.getElementById('final-score').textContent = score + ' / ' + total;
+  const pct = total > 0 ? score / total : 0;
+  document.getElementById('final-label').textContent =
+    pct === 1   ? '¡Antimacondia pura — nada se te escapó!' :
+    pct >= 0.75 ? 'Buen dominio del onset.' :
+    pct >= 0.4  ? 'El algoritmo te está enseñando.' :
+                  'Los trocados se resisten. Por ahora.';
+
+  const wrong = results.filter(r => !r.correct);
+  let html = '<div class="label">Errores / saltados</div>';
+  if (wrong.length === 0) {
+    html += '<p class="summary-empty">Ninguno. Partida perfecta.</p>';
+  } else {
+    wrong.forEach(r => {
+      html += '<div class="summary-item">'
+        + '<span class="summary-hint">' + r.q.hint + '</span>'
+        + '<span class="summary-answer">' + r.q.answer + '</span>'
+        + '</div>';
+    });
+  }
+  document.getElementById('summary-card').innerHTML = html;
+}
+</script>
+</body>
+</html>
