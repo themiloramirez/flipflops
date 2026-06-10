@@ -5,331 +5,356 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flipflops</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #ffffff;
-    --bg-secondary: #f5f4f0;
-    --bg-success: #eaf3de;
-    --bg-danger: #fcebeb;
-    --bg-info: #e6f1fb;
-    --text: #1a1a1a;
-    --text-secondary: #666660;
-    --text-success: #3b6d11;
-    --text-danger: #a32d2d;
-    --text-info: #185fa5;
-    --border: rgba(0,0,0,0.12);
-    --border-md: rgba(0,0,0,0.22);
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-    --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
-  }
+:root {
+  --bg:        #0f0f0d;
+  --bg-card:   #1a1a16;
+  --bg-hint:   #161612;
+  --gold:      #c8a84b;
+  --gold-dim:  #7a6228;
+  --gold-glow: #e8c870;
+  --text:      #e8e4d8;
+  --text-dim:  #7a7a6a;
+  --text-mute: #3a3a30;
+  --success:   #4a7c2f;
+  --success-bg:#0e1f08;
+  --danger:    #8c2e2e;
+  --danger-bg: #1f0808;
+  --border:    rgba(200,168,75,0.15);
+  --border-md: rgba(200,168,75,0.28);
+  --mono: 'SF Mono','Fira Code','Cascadia Code',Consolas,monospace;
+  --radius: 6px;
+}
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1c1a;
-      --bg-secondary: #252523;
-      --bg-success: #173404;
-      --bg-danger: #501313;
-      --bg-info: #042c53;
-      --text: #f0ede6;
-      --text-secondary: #999990;
-      --text-success: #c0dd97;
-      --text-danger: #f7c1c1;
-      --text-info: #b5d4f4;
-      --border: rgba(255,255,255,0.10);
-      --border-md: rgba(255,255,255,0.20);
-    }
-  }
+body {
+  font-family: var(--mono);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 4rem;
+}
 
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 2rem 1rem 4rem;
-  }
+header {
+  width: 100%;
+  border-bottom: 0.5px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 64px;
+  margin-bottom: 3rem;
+}
 
-  #app { width: 100%; max-width: 520px; }
+.logo-wrap { display: flex; align-items: center; gap: 12px; }
+.logo-svg { width: 36px; height: 36px; flex-shrink: 0; }
 
-  .screen { display: none; }
-  .screen.active { display: block; }
+.logo-text { display: flex; flex-direction: column; gap: 1px; }
 
-  h1 {
-    font-size: 28px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    margin-bottom: 4px;
-  }
+.logo-name {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  text-transform: uppercase;
+  line-height: 1;
+}
 
-  h2 {
-    font-size: 22px;
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
+.logo-tagline {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
 
-  .sub {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin-bottom: 1.75rem;
-    line-height: 1.6;
-  }
+#app { width: 100%; max-width: 520px; padding: 0 1.25rem; }
 
-  .version {
-    font-size: 11px;
-    color: var(--text-secondary);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-  }
+.screen { display: none; }
+.screen.active { display: block; }
 
-  .card {
-    background: var(--bg);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-  }
+.troc-badge {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  border: 0.5px solid var(--gold-dim);
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin-bottom: 1.25rem;
+}
 
-  .label {
-    font-size: 11px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    margin-bottom: 10px;
-  }
+.intro {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  letter-spacing: 0.01em;
+}
 
-  .time-options { display: flex; gap: 8px; }
+.intro em { color: var(--gold); font-style: normal; }
 
-  .time-btn {
-    flex: 1;
-    padding: 10px;
-    border: 0.5px solid var(--border-md);
-    border-radius: var(--radius-md);
-    background: transparent;
-    color: var(--text);
-    font-size: 15px;
-    font-family: var(--font);
-    cursor: pointer;
-    transition: background 0.12s;
-  }
+.section-label {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
 
-  .time-btn:hover { background: var(--bg-secondary); }
+.card {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
 
-  .time-btn.selected {
-    border: 2px solid #378add;
-    color: var(--text-info);
-    background: var(--bg-info);
-  }
+.time-options { display: flex; gap: 8px; }
 
-  .primary-btn {
-    width: 100%;
-    padding: 13px;
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: 16px;
-    font-weight: 500;
-    font-family: var(--font);
-    cursor: pointer;
-    margin-top: 0.5rem;
-    transition: opacity 0.12s;
-  }
+.time-btn {
+  flex: 1;
+  padding: 10px;
+  border: 0.5px solid var(--border-md);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 14px;
+  font-family: var(--mono);
+  cursor: pointer;
+  transition: all 0.12s;
+  letter-spacing: 0.04em;
+}
 
-  .primary-btn:hover { opacity: 0.82; }
+.time-btn:hover { background: var(--bg-hint); color: var(--text); }
 
-  .secondary-btn {
-    width: 100%;
-    padding: 11px;
-    border: 0.5px solid var(--border-md);
-    border-radius: var(--radius-md);
-    background: transparent;
-    color: var(--text);
-    font-size: 15px;
-    font-family: var(--font);
-    cursor: pointer;
-    transition: background 0.12s;
-  }
+.time-btn.selected {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(200,168,75,0.07);
+}
 
-  .secondary-btn:hover { background: var(--bg-secondary); }
+.primary-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  cursor: pointer;
+  margin-top: 0.75rem;
+  transition: opacity 0.12s;
+}
 
-  .lives { display: flex; gap: 6px; margin-bottom: 1rem; }
+.primary-btn:hover { opacity: 0.85; }
 
-  .heart {
-    font-size: 20px;
-    transition: opacity 0.25s;
-    line-height: 1;
-  }
+.algo-note {
+  font-size: 10px;
+  color: var(--text-mute);
+  margin-top: 1.75rem;
+  line-height: 1.8;
+  text-align: center;
+  letter-spacing: 0.03em;
+}
 
-  .heart.lost { opacity: 0.18; }
+.algo-note code { color: var(--gold-dim); font-family: var(--mono); }
 
-  .progress {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-  }
+.lives { display: flex; gap: 8px; margin-bottom: 1rem; }
 
-  .hint-card {
-    background: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1rem;
-  }
+.heart { font-size: 16px; transition: opacity 0.25s; color: var(--gold); }
+.heart.lost { opacity: 0.12; }
 
-  .hint-category {
-    font-size: 11px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 6px;
-  }
+.progress {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 1rem;
+}
 
-  .hint-text {
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.35;
-  }
+.hint-card {
+  background: var(--bg-hint);
+  border: 0.5px solid var(--border);
+  border-left: 2px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
 
-  .timer-wrap {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    margin-bottom: 1.25rem;
-    overflow: hidden;
-  }
+.hint-category {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 8px;
+}
 
-  .timer-bar {
-    height: 100%;
-    border-radius: 2px;
-    background: var(--text);
-    transition: width 0.1s linear, background 0.3s;
-  }
+.hint-text {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
 
-  .feedback {
-    padding: 10px 14px;
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    margin-bottom: 10px;
-    display: none;
-    line-height: 1.5;
-  }
+.timer-wrap {
+  height: 2px;
+  background: var(--text-mute);
+  border-radius: 1px;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
 
-  .feedback.correct {
-    background: var(--bg-success);
-    color: var(--text-success);
-  }
+.timer-bar { height: 100%; background: var(--gold); transition: width 0.1s linear, background 0.3s; }
 
-  .feedback.wrong {
-    background: var(--bg-danger);
-    color: var(--text-danger);
-  }
+.feedback {
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+  display: none;
+  line-height: 1.6;
+  border: 0.5px solid transparent;
+}
 
-  .answer-input {
-    width: 100%;
-    padding: 12px 14px;
-    font-size: 16px;
-    font-family: var(--mono);
-    border-radius: var(--radius-md);
-    border: 0.5px solid var(--border-md);
-    background: var(--bg);
-    color: var(--text);
-    margin-bottom: 10px;
-    outline: none;
-    transition: border-color 0.12s;
-  }
+.feedback.correct { background: var(--success-bg); color: #6abf45; border-color: var(--success); }
+.feedback.wrong { background: var(--danger-bg); color: #c75555; border-color: var(--danger); }
 
-  .answer-input:focus { border-color: var(--text); }
-  .answer-input:disabled { opacity: 0.5; }
+.answer-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: var(--mono);
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border-md);
+  background: var(--bg-card);
+  color: var(--text);
+  margin-bottom: 10px;
+  outline: none;
+  letter-spacing: 0.04em;
+  transition: border-color 0.12s;
+}
 
-  .skip-link {
-    display: block;
-    font-size: 13px;
-    color: var(--text-secondary);
-    text-align: center;
-    cursor: pointer;
-    margin-top: 10px;
-    user-select: none;
-  }
+.answer-input:focus { border-color: var(--gold); }
+.answer-input:disabled { opacity: 0.35; }
+.answer-input::placeholder { color: var(--text-mute); }
 
-  .skip-link:hover { color: var(--text); }
+.secondary-btn {
+  width: 100%;
+  padding: 11px;
+  border: 0.5px solid var(--border-md);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  cursor: pointer;
+  transition: all 0.12s;
+}
 
-  .score-big {
-    font-size: 52px;
-    font-weight: 500;
-    letter-spacing: -0.03em;
-    text-align: center;
-    margin: 1.5rem 0 0.25rem;
-  }
+.secondary-btn:hover { background: var(--bg-card); color: var(--text); }
 
-  .score-label {
-    font-size: 14px;
-    color: var(--text-secondary);
-    text-align: center;
-    margin-bottom: 1.75rem;
-    line-height: 1.5;
-  }
+.skip-link {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-mute);
+  text-align: center;
+  cursor: pointer;
+  margin-top: 12px;
+  user-select: none;
+  transition: color 0.12s;
+}
 
-  .summary-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 6px 0;
-    border-bottom: 0.5px solid var(--border);
-    gap: 12px;
-  }
+.skip-link:hover { color: var(--text-dim); }
 
-  .summary-hint {
-    font-size: 13px;
-    color: var(--text-secondary);
-    flex: 1;
-  }
+.score-big {
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--gold);
+  margin: 1.5rem 0 0.25rem;
+}
 
-  .summary-answer {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text);
-    white-space: nowrap;
-  }
+.score-label {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
 
-  .summary-empty {
-    font-size: 13px;
-    color: var(--text-secondary);
-    font-style: italic;
-  }
+.summary-label {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
 
-  .algo-note {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-top: 1.5rem;
-    line-height: 1.6;
-    text-align: center;
-  }
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 7px 0;
+  border-bottom: 0.5px solid var(--border);
+  gap: 12px;
+}
 
-  .algo-note code {
-    font-family: var(--mono);
-    font-size: 11px;
-    background: var(--bg-secondary);
-    padding: 1px 5px;
-    border-radius: 4px;
-  }
+.summary-hint { font-size: 12px; color: var(--text-dim); flex: 1; }
+.summary-answer { font-size: 12px; color: var(--gold); white-space: nowrap; letter-spacing: 0.04em; }
+.summary-empty { font-size: 12px; color: var(--text-dim); font-style: italic; letter-spacing: 0.04em; }
 </style>
 </head>
 <body>
+
+<header>
+  <div class="logo-wrap">
+    <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="10" cy="24" rx="7" ry="4" fill="#c8a84b" opacity="0.9"/>
+      <rect x="6" y="20" width="8" height="2.5" rx="1.2" fill="#0f0f0d"/>
+      <line x1="10" y1="20" x2="13" y2="14" stroke="#c8a84b" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="10" y1="20" x2="7.5" y2="14" stroke="#c8a84b" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="13" cy="13.5" r="1.2" fill="#c8a84b" opacity="0.7"/>
+      <circle cx="7.5" cy="13.5" r="1.2" fill="#c8a84b" opacity="0.7"/>
+      <ellipse cx="26" cy="20" rx="7" ry="4" fill="#c8a84b" opacity="0.55"/>
+      <rect x="22" y="16" width="8" height="2.5" rx="1.2" fill="#0f0f0d"/>
+      <line x1="26" y1="16" x2="29" y2="10" stroke="#c8a84b" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+      <line x1="26" y1="16" x2="23.5" y2="10" stroke="#c8a84b" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+      <circle cx="29" cy="9.5" r="1.2" fill="#c8a84b" opacity="0.45"/>
+      <circle cx="23.5" cy="9.5" r="1.2" fill="#c8a84b" opacity="0.45"/>
+    </svg>
+    <div class="logo-text">
+      <span class="logo-name">Flipflops</span>
+      <span class="logo-tagline">swap the onset · keep the chaos</span>
+    </div>
+  </div>
+</header>
+
 <div id="app">
 
-  <!-- START -->
   <div id="screen-start" class="screen active">
-    <div class="version">TROC v0.1</div>
-    <h1>Flipflops</h1>
-    <p class="sub">Te damos una pista temática. Vos adivinás e invertís las iniciales: Bimon Solivar y Sanuelita Maenz— OJO! no el original, el <em>flipflopeado</em>.</p>
+    <div class="troc-badge">TROC v0.1</div>
+    <p class="intro">
+      Te damos una pista. Vos adivinás e invertís las iniciales consonánticas:<br>
+      <em>Bimón Solívar</em>, <em>Krida Fahlo</em>, <em>Yom Thorke</em>.<br>
+      OJO — no el original, el <em>flipflopeado</em>.
+    </p>
     <div class="card">
-      <div class="label">Tiempo por respuesta</div>
+      <div class="section-label">Tiempo por respuesta</div>
       <div class="time-options">
         <button class="time-btn" data-t="5">5 s</button>
         <button class="time-btn selected" data-t="15">15 s</button>
@@ -337,10 +362,12 @@
       </div>
     </div>
     <button class="primary-btn" id="btn-start">Empezar</button>
-    <p class="algo-note">Algoritmo: <code>TROC(M1,M2) = [on2+resto1] / [on1+resto2]</code><br>Los onsets consonánticos se intercambian. Los dígrafos viajan completos.</p>
+    <p class="algo-note">
+      <code>TROC(M1,M2) = [on2+resto1] / [on1+resto2]</code><br>
+      onsets consonánticos se intercambian · dígrafos viajan completos
+    </p>
   </div>
 
-  <!-- GAME -->
   <div id="screen-game" class="screen">
     <div class="lives" id="lives-display"></div>
     <div class="progress" id="progress-text"></div>
@@ -351,15 +378,13 @@
     <div class="timer-wrap"><div class="timer-bar" id="timer-bar"></div></div>
     <div class="feedback" id="feedback"></div>
     <input class="answer-input" id="answer-input" type="text"
-      placeholder="Escribí el trocado..."
+      placeholder="escribí el trocado..."
       autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
     <button class="secondary-btn" id="btn-submit">Confirmar</button>
-    <span class="skip-link" id="btn-skip">No sé, siguiente →</span>
+    <span class="skip-link" id="btn-skip">no sé — siguiente →</span>
   </div>
 
-  <!-- END -->
   <div id="screen-end" class="screen">
-    <h2>Ronda terminada</h2>
     <div class="score-big" id="final-score"></div>
     <div class="score-label" id="final-label"></div>
     <div class="card" id="summary-card"></div>
@@ -370,7 +395,7 @@
 
 <script>
 const CORPUS = [
-  { hint: "Funny Girl", category: "Cine / actuación", answer: "Strarbara Beisand", original: "Barbra Streissand" },
+  { hint: "Funny Girl", category: "Cine / actuación", answer: "Strarbra Beisand", original: "Barbra Streisand" },
   { hint: "Chophie's Soice?", category: "Cine / actuación", answer: "Streryl Meep", original: "Meryl Streep" },
   { hint: "Metamorphic author", category: "Literatura", answer: "Kranz Fafka", original: "Franz Kafka" },
   { hint: "Elizabeth Tár", category: "Cine / actuación", answer: "Blate Canchett", original: "Cate Blanchett" },
@@ -378,7 +403,7 @@ const CORPUS = [
   { hint: "Gone with the Wind actress", category: "Cine / actuación", answer: "Livien Veigh", original: "Vivien Leigh" },
   { hint: "All About Eve", category: "Cine / actuación", answer: "Dette Bavis", original: "Bette Davis" },
   { hint: "Ziggy Stardust", category: "Música", answer: "Bavid Dowie", original: "David Bowie" },
-  { hint: "Rhapsodian from Czechia", category: "Música", answer: "Meddie Frercury", original: "Freddie Mercury" },
+  { hint: "Bohemian Rhapsody", category: "Música", answer: "Meddie Frercury", original: "Freddie Mercury" },
   { hint: "Grace + attitude", category: "Música", answer: "Jace Grones", original: "Grace Jones" },
   { hint: "Radiohead voice", category: "Música", answer: "Yom Thorke", original: "Thom Yorke" },
   { hint: "The eternal replicant", category: "Cine / títulos", answer: "Rade Blunner", original: "Blade Runner" },
@@ -480,7 +505,7 @@ function startTimer() {
 function updateBar(pct) {
   const bar = document.getElementById('timer-bar');
   bar.style.width = (pct * 100) + '%';
-  bar.style.background = pct > 0.4 ? 'var(--text)' : '#e24b4a';
+  bar.style.background = pct > 0.4 ? '#c8a84b' : '#c75555';
 }
 
 function normalize(s) {
@@ -514,12 +539,12 @@ function submitAnswer() {
   lockInput();
   if (correct) {
     score++;
-    showFeedbackEl('correct', '✓ Correcto');
+    showFeedbackEl('correct', '✓ correcto');
     setTimeout(() => { currentIdx++; loadQuestion(); }, 900);
   } else {
     lives--;
     renderLives();
-    showFeedbackEl('wrong', '✗ Era <span style="font-family:var(--mono)">' + q.answer + '</span> <span style="opacity:0.6;font-size:12px">(' + q.original + ')</span>');
+    showFeedbackEl('wrong', '✗ era <span style="color:#c8a84b">' + q.answer + '</span> <span style="opacity:0.5;font-size:11px">(' + q.original + ')</span>');
     if (lives <= 0) { setTimeout(endGame, 1500); return; }
     setTimeout(() => { currentIdx++; loadQuestion(); }, 1800);
   }
@@ -534,7 +559,7 @@ function skipQuestion() {
   results.push({ q, correct: false, skipped: true });
   renderLives();
   lockInput();
-  showFeedbackEl('wrong', 'Saltado — era <span style="font-family:var(--mono)">' + q.answer + '</span> <span style="opacity:0.6;font-size:12px">(' + q.original + ')</span>');
+  showFeedbackEl('wrong', 'saltado — era <span style="color:#c8a84b">' + q.answer + '</span> <span style="opacity:0.5;font-size:11px">(' + q.original + ')</span>');
   if (lives <= 0) { setTimeout(endGame, 1500); return; }
   setTimeout(() => { currentIdx++; loadQuestion(); }, 1800);
 }
@@ -547,7 +572,7 @@ function timeOut() {
   results.push({ q, correct: false, timeout: true });
   renderLives();
   lockInput();
-  showFeedbackEl('wrong', 'Tiempo — era <span style="font-family:var(--mono)">' + q.answer + '</span> <span style="opacity:0.6;font-size:12px">(' + q.original + ')</span>');
+  showFeedbackEl('wrong', 'tiempo — era <span style="color:#c8a84b">' + q.answer + '</span> <span style="opacity:0.5;font-size:11px">(' + q.original + ')</span>');
   if (lives <= 0) { setTimeout(endGame, 1500); return; }
   setTimeout(() => { currentIdx++; loadQuestion(); }, 1800);
 }
@@ -565,7 +590,7 @@ function endGame() {
                   'Los trocados se resisten. Por ahora.';
 
   const wrong = results.filter(r => !r.correct);
-  let html = '<div class="label">Errores / saltados</div>';
+  let html = '<div class="summary-label">Errores / saltados</div>';
   if (wrong.length === 0) {
     html += '<p class="summary-empty">Ninguno. Partida perfecta.</p>';
   } else {
